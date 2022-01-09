@@ -1,5 +1,6 @@
 FROM python:3.7-slim
 
+export .env
 ENV DAGSTER_HOME=/opt/dagster/dagster_home/
 ENV DAGSTER_APP=/opt/dagster/app
 ENV DEST_INSTALL=/opt/dagster/app

@@ -1,10 +1,12 @@
-FROM python:3.7-slim
+FROM python:3.8-slim
 
+RUN export $(grep -v '^#' .env | xargs)
 ENV DAGSTER_HOME=/opt/dagster/dagster_home/
-ENV DAGSTER_APP=/opt/dagster/app
-ENV DEST_INSTALL=/opt/dagster/app
+ARG DAGSTER_APP=/opt/dagster/app
+ARG DEST_INSTALL=/opt/dagster/app
 
 RUN mkdir -p ${DAGSTER_HOME} ${DAGSTER_APP} ${DEST_INSTALL}
+WORKDIR ${DEST_INSTALL}
 
 RUN pip install --upgrade pip && \
     pip install pipenv
@@ -12,9 +14,10 @@ RUN pip install --upgrade pip && \
 
 # Install custom plugins and custom libraries
 COPY Pipfile* ${DEST_INSTALL}/
+run ls -l /opt/dagster/app
 RUN pipenv install --system --keep-outdated
 
-COPY repo.py workspace.yaml ${DAGSTER_APP}
+COPY src/repo.py workspace.yaml ${DAGSTER_APP}
 COPY dagster.yaml %{DAGSTER_HOME}
 
 WORKDIR ${DAGSTER_APP}

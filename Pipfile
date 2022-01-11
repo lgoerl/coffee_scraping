@@ -8,7 +8,10 @@ pandas = "*"
 SQLAlchemy = "*"
 selenium = "*"
 bs4 = "*"
+dagster-aws = "*"
+dagster-dbt = "*"
 dagster-postgres = "*"
+dagster-pyspark = "*"
 dagit = "*"
 
 [dev-packages]

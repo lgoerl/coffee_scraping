@@ -6,8 +6,8 @@ setup(
     version="0.0.1",
     description="scrape coffee roaster data",
     url="https://github.com/lgoerl/coffee_scraping",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     author="Lee Goerl",
-    packages=find_packages(exclude=["docs", "tests"]),
+    packages=find_packages(where="src", exclude=["docs", "tests"]),
     package_dir={"dags": "dags"},
 )

@@ -1,5 +1,5 @@
 from dagster import build_schedule_from_partitioned_job, repository
-from jobs.srape_onyx import (
+from dags.jobs.scrape_onyx import (
     scrape_onyx_prod,
     scrape_onyx_test
 )

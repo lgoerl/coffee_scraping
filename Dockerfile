@@ -11,13 +11,13 @@ WORKDIR ${DEST_INSTALL}
 RUN pip install --upgrade pip && \
     pip install pipenv
 
-
 # Install custom plugins and custom libraries
-COPY Pipfile* ${DEST_INSTALL}/
-run ls -l /opt/dagster/app
-RUN pipenv install --system --keep-outdated
+COPY Pipfile*  setup.py src ${DEST_INSTALL}/
 
-COPY src/repo.py workspace.yaml ${DAGSTER_APP}
+RUN pipenv install --system --keep-outdated
+RUN python setup.py install
+
+COPY src/dags/repo.py workspace.yaml ${DAGSTER_APP}
 COPY dagster.yaml %{DAGSTER_HOME}
 
 WORKDIR ${DAGSTER_APP}

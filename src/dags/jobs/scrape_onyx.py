@@ -1,4 +1,4 @@
-from .ops.product_scraping import get_product_list, get_product_info
+from dags.ops.product_scraping import get_product_list, get_product_info
 from datetime import datetime
 from dagster import graph, daily_partitioned_config, in_process_executor
 
@@ -13,7 +13,6 @@ def get_active_products():
 scrape_onyx_prod = get_active_products.to_job(
     resource_defs={
         **{
-            "partition_bounds": partition_bounds,
             "api_client": onyx_api_client,
         },
         **RESOURCES_PROD,
@@ -38,7 +37,6 @@ scrape_onyx_prod = get_active_products.to_job(
 scrape_onyx_test = get_active_products.to_job(
     resource_defs={
         **{
-            "partition_bounds": partition_bounds,
             "api_client": onyx_mock_api_client
         },
         **RESOURCES_LOCAL,

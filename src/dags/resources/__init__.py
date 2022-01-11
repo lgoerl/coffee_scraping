@@ -32,6 +32,13 @@ postgres_io_manager_prod = postgres_io_manager.configured({
 RESOURCES_PROD = {
     "warehouse_io_manager": postgres_io_manager_prod,
     "warehouse_loader": postgres_io_manager_prod,
-    "postgres": configured_postgres,
+    # "postgres": configured_postgres,
+    # "pyspark": configured_pyspark,
+}
+
+RESOURCES_LOCAL = {
+    "warehouse_io_manager": postgres_io_manager_prod,
+    "warehouse_loader": postgres_io_manager_prod,
+    # "postgres": configured_postgres,
     # "pyspark": configured_pyspark,
 }

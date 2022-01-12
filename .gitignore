@@ -1,2 +1,5 @@
 .env
 *.DS_Store
+build/*
+dist/*
+coffee_scraping.egg-info/*

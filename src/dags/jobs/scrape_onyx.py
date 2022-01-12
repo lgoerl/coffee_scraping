@@ -1,10 +1,14 @@
-from dags.ops.product_scraping import get_product_list, get_product_info
+from dags.ops.product_scraping import get_product_list, get_product_info, process_product_collection
 from datetime import datetime
 from dagster import graph, daily_partitioned_config, in_process_executor
 
 @graph
 def get_active_products():
     product_list = get_product_list()
+
+    products = product_list.map(get_product_info)
+    product_df = process_product_collection(products.collect())
+
     products = []
     for product in product_list:
         products.append(get_product_info(product))

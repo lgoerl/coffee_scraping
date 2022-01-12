@@ -13,6 +13,7 @@ dagster-dbt = "*"
 dagster-postgres = "*"
 dagster-pyspark = "*"
 dagit = "*"
+python-dotenv = "*"
 
 [dev-packages]
 coverage = "*"

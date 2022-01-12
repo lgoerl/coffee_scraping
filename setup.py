@@ -9,5 +9,5 @@ setup(
     python_requires=">=3.8",
     author="Lee Goerl",
     packages=find_packages(where="src", exclude=["docs", "tests"]),
-    package_dir={"dags": "dags"},
+    package_dir={"dags": "src/dags"},
 )

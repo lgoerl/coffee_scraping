@@ -8,20 +8,11 @@ ARG DEST_INSTALL=/opt/dagster/app
 RUN mkdir -p ${DAGSTER_HOME} ${DAGSTER_APP} ${DEST_INSTALL}
 WORKDIR ${DEST_INSTALL}
 
-RUN pip install --upgrade pip && \
-    pip install pipenv
-
-# Install custom plugins and custom libraries
-COPY Pipfile*  setup.py src ${DEST_INSTALL}/
-
-RUN pipenv install --system --keep-outdated
-RUN python setup.py install
-
-COPY src/dags/repo.py workspace.yaml ${DAGSTER_APP}
-COPY dagster.yaml %{DAGSTER_HOME}
+RUN pip install \
+    dagster \
+    dagster-graphql \
+    dagit \
+    dagster-postgres \
+    dagster-docker
 
 WORKDIR ${DAGSTER_APP}
-
-EXPOSE 3000
-
-ENTRYPOINT ["dagit", "-h", "0.0.0.0", "-p", "3000"]

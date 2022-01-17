@@ -6,6 +6,7 @@ verify_ssl = true
 [packages]
 pandas = "*"
 SQLAlchemy = "*"
+psycopg2 = "*"
 selenium = "*"
 bs4 = "*"
 dagster-aws = "*"

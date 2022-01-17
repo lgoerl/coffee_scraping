@@ -7,7 +7,8 @@ from dagster import resource
 from dagster.utils import file_relative_path
 from typing import Any, Dict, Optional
 
-from resources.scrapers.base_api_scraper import BaseScraper
+from .base_api_scraper import BaseScraper
+from .responses import api_responses
 
 roaster_name = "Onyx"
 base_url = "https://onyxcoffeelab.com"
@@ -23,7 +24,7 @@ class OnyxScraper(BaseScraper):
         super().__init__(roaster_name)
         
     def get_active_roasts(self):
-        response = requests.get(products_url, headers=request_header)
+        response = self.get_url(products_url, headers=request_header)
         soup = BeautifulSoup(response.text, "html.parser")
         products = soup.find_all("a", class_="product-preview", href=True)
         if not products:
@@ -34,9 +35,10 @@ class OnyxScraper(BaseScraper):
         return [p["href"] for p in products]
     
     def get_roast(self, roast_href):
-        roast_url = f"{base_url}/{roast_href}"
-        logging.info(f"Scraping roast attributes at {roast_url}.")
-        response = requests.get(roast_url, headers=request_header)
+        roast_href = roast_href if roast_href[0] == "/" else "/"+roast_href
+        roast_url = base_url + roast_href
+        logging.warning(f"Scraping roast attributes at {roast_url}.")
+        response = self.get_url(roast_url, headers=request_header)
         soup = BeautifulSoup(response.text, "html.parser")
         stats = soup.find("div", class_=lambda t: t and "coffee-stats" in t)
         try:
@@ -64,20 +66,21 @@ class OnyxScraper(BaseScraper):
             )
         return features
 
+class OnyxMockScraper(OnyxScraper):
+    def __init__(self, pipeline_test=False):
+        super().__init__()
+        self.super = OnyxScraper()
+        self.api_responses = api_responses
+        self.pipeline_test = pipeline_test
 
+    def get_url(self, url, **kwargs):
+        return api_responses[url]
 
-class OnyxMockScraper(BaseScraper):
-    def __init__(self):
-        super().__init__(roaster_name)
-        file_path = file_relative_path(__file__, "../snapshot.gzip")
-        with gzip.open(file_path, "r") as f:
-            self._items: Dict[str, HNItemRecord] = json.loads(f.read().decode())
-        
     def get_active_roasts(self):
-        return self._items.keys()
-    
-    def get_roast(self, roast_href):
-        return self._items[roast_href]
+        if self.pipeline_test:
+            return ["/products/geometry"]
+        else:
+            return self.super.get_active_roasts()
 
 
 @resource(description=f"Fetch current roasts and meta from {base_url}")
@@ -86,4 +89,4 @@ def onyx_api_client(init_context):
 
 @resource(description=f"Mock responses from {base_url} for testing")
 def onyx_mock_api_client(init_context):
-    return OnyxMockScraper()
+    return OnyxMockScraper(pipeline_test=True)

@@ -1,11 +1,16 @@
-import hasher
+import requests
 import sqlalchemy
 from abc import ABC, abstractmethod
 
+return_columns = ["roaster", "name", "origin", "elevation", "description", "tasting_notes"]
+
 class BaseScraper(ABC):
     def __init__(self, roaster):
-        self.return_columns = ["roaster", "name", "origin", "description", "active", "updated_on"]
+        self.return_columns = return_columns
         self.roaster = roaster
+
+    def get_url(self, url, **kwargs):
+        return requests.get(url, **kwargs)
     
     @abstractmethod
     def get_active_roasts(self):

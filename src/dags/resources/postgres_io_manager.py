@@ -21,12 +21,13 @@ SHARED_POSTGRES_CONF = {
 
 @contextmanager
 def connect_postgres(config, schema="public"):
-    url = URL(
-        username=config["user"],
+    url = URL.create(
+        username=config["username"],
         password=config["password"],
         host=config["host"],
         port=5432,
         database=config["database"],
+        drivername="postgresql+psycopg2",
     )
 
     conn = None
@@ -68,8 +69,8 @@ class PostgresIOManager(IOManager):
             if context.metadata.get("partitioned") is True
             else None
         )
-        with connect_postgres(config=self._config, schema=schema) as con:
-            con.execute(self._get_cleanup_statement(table, schema, partition_bounds))
+        # with connect_postgres(config=self._config, schema=schema) as con:
+        #     con.execute(self._get_cleanup_statement(table, schema, partition_bounds))
 
         if isinstance(obj, SparkDataFrame):
             yield from self._handle_spark_output(obj, schema, table)
@@ -88,12 +89,12 @@ class PostgresIOManager(IOManager):
         )
 
     def _handle_pandas_output(self, obj: PandasDataFrame, schema: str, table: str):
-        from snowflake import connector  # pylint: disable=no-name-in-module
+        # from snowflake import connector  # pylint: disable=no-name-in-module
 
         yield EventMetadataEntry.int(obj.shape[0], "Rows")
         yield EventMetadataEntry.md(pandas_columns_to_markdown(obj), "DataFrame columns")
 
-        connector.paramstyle = "pyformat"
+        # connector.paramstyle = "pyformat"
         with connect_postgres(config=self._config, schema=schema) as con:
             with_uppercase_cols = obj.rename(str.upper, copy=False, axis="columns")
             with_uppercase_cols.to_sql(
@@ -101,7 +102,7 @@ class PostgresIOManager(IOManager):
                 con=con,
                 if_exists="append",
                 index=False,
-                method=pd_writer,
+                method="multi",
             )
 
     def _handle_spark_output(self, df: SparkDataFrame, schema: str, table: str):

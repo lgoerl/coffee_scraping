@@ -2,7 +2,7 @@ import requests
 import sqlalchemy
 from abc import ABC, abstractmethod
 
-return_columns = ["roaster", "name", "origin", "elevation", "description", "tasting_notes"]
+return_columns = ["roaster", "name", "origin", "elevation", "description", "tasting_notes", "process"]
 
 class BaseScraper(ABC):
     def __init__(self, roaster):

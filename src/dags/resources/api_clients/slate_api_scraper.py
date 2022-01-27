@@ -18,8 +18,9 @@ request_header = {"User-Agent": "Mozilla/5.0"}
 feature_map = {
     "cup": "tasting_notes"
 }
+ignore_href = []
 
-class Slate3Scraper(BaseScraper):
+class SlateScraper(BaseScraper):
     def __init__(self):
         super().__init__(roaster_name)
         
@@ -32,7 +33,7 @@ class Slate3Scraper(BaseScraper):
                 f"No products found. "+
                 f"Check {products_url} to verify products are linked in <a> tags with class='product__view'"
             )
-        return [p["href"] for p in products]
+        return [p["href"] for p in products if p not in ignore_href]
     
     def get_roast(self, roast_href):
         roast_href = roast_href if roast_href[0] == "/" else "/"+roast_href
@@ -40,36 +41,30 @@ class Slate3Scraper(BaseScraper):
         logging.info(f"Scraping roast attributes at {roast_url}.")
         response = self.get_url(roast_url, headers=request_header)
         soup = BeautifulSoup(response.text, "html.parser")
-        stats = soup.find("div", class_=lambda t: t and "coffee-stats" in t)
-        try:
-            title = soup.title.text.replace("Onyx Coffee Lab", "").replace("\n", "")
-            description = soup.find("div", class_="main-blurb").find("p").text
-        except Exception as e:
-            raise ValueError(
-                f"Title or description missing. "+
-                f"Check {roast_url} to verify description in div class 'main-blurb'"
-            )
-        features = {
-            "href": roast_href,
-            "roaster": roaster_name,
-            "name": title,
-            "description": description,
-        }
-        for feat in stats.find_all(class_="a-feature"):
-            feature_label = feat.find(class_="label").text.replace(":", "").lower()
-            feature_value = feat.find(class_="value").text
-            features[feature_map.get(feature_label, feature_label)] = feature_value
-        if set(features.keys()) == {"href", "title"}:
-            raise ValueError(
-                f"No attributes found. "+
-                f"Check {roast_url} to verify roast notes are under '+coffee-stats' div tag as feature/value tags of 'a-feature' class"
-            )
+        
+        info_tags = soup.find("div", class_="product-short-description").find_all("p")
+        if len(info_tags) != 4:
+            raise ValueError(f"class product-short-description as unexpected shape at {roast_url}")
+        features = dict()
+        attnames = []
+        for t in info_tags[0].find_all("strong"):
+            if t.find("span"):
+                features["name"] = t.find("span").text
+                attnames.append(t.text.split("\n")[1])
+            else:
+                attnames.append(t.text.replace(u"\xa0", ""))
+        attvals = [v.text for v in info_tags[0].find_all("em")]
+        if len(attnames) != len(attvals):
+            raise ValueError(f"strong/em key/value pairs have unexpected shape as {roast_url}")
+        features.update({k:v for k,v in zip(attnames, attvals)})
+        features["tasting_notes"] = info_tags[2].text
+        features["description"] = info_tags[3].text
         return features
 
-class OnyxMockScraper(OnyxScraper):
+class SlateMockScraper(SlateScraper):
     def __init__(self, pipeline_test=False):
         super().__init__()
-        self.super = OnyxScraper()
+        self.super = SlateScraper()
         self.api_responses = api_responses
         self.pipeline_test = pipeline_test
 
@@ -84,9 +79,9 @@ class OnyxMockScraper(OnyxScraper):
 
 
 @resource(description=f"Fetch current roasts and meta from {base_url}")
-def onyx_api_client(init_context):
-    return OnyxScraper()
+def slate_api_client(init_context):
+    return SlateScraper()
 
 @resource(description=f"Mock responses from {base_url} for testing")
-def onyx_mock_api_client(init_context):
-    return OnyxMockScraper(pipeline_test=True)
+def slate_mock_api_client(init_context):
+    return SlateMockScraper(pipeline_test=True)

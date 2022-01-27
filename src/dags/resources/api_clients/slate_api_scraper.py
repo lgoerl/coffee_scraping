@@ -10,27 +10,27 @@ from typing import Any, Dict, Optional
 from .base_api_scraper import BaseScraper
 from .responses import api_responses
 
-roaster_name = "Onyx"
-base_url = "https://onyxcoffeelab.com"
-products_url = f"{base_url}/collections/coffee"
+roaster_name = "Slate"
+base_url = "https://slatecoffee.com"
+products_url = f"{base_url}/product-category/coffee"
 request_header = {"User-Agent": "Mozilla/5.0"}
 
 feature_map = {
     "cup": "tasting_notes"
 }
 
-class OnyxScraper(BaseScraper):
+class Slate3Scraper(BaseScraper):
     def __init__(self):
         super().__init__(roaster_name)
         
     def get_active_roasts(self):
         response = self.get_url(products_url, headers=request_header)
         soup = BeautifulSoup(response.text, "html.parser")
-        products = soup.find_all("a", class_="product-preview", href=True)
+        products = soup.find("div", class_="shop-container").find_all("a", class_=lambda v: v and "product__link" in v, href=True)
         if not products:
             raise ValueError(
                 f"No products found. "+
-                f"Check {products_url} to verify products are linked in <a> tags with class='product-preview'"
+                f"Check {products_url} to verify products are linked in <a> tags with class='product__view'"
             )
         return [p["href"] for p in products]
     

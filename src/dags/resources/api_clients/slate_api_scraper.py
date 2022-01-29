@@ -16,9 +16,11 @@ products_url = f"{base_url}/product-category/coffee"
 request_header = {"User-Agent": "Mozilla/5.0"}
 
 feature_map = {
-    "cup": "tasting_notes"
+    "region": "origin",
+
 }
 ignore_href = []
+# slate has extra features from baseline/Onyx: Producer and Cultivar
 
 class SlateScraper(BaseScraper):
     def __init__(self):
@@ -35,9 +37,9 @@ class SlateScraper(BaseScraper):
             )
         return [p["href"] for p in products if p not in ignore_href]
     
-    def get_roast(self, roast_href):
-        roast_href = roast_href if roast_href[0] == "/" else "/"+roast_href
-        roast_url = base_url + roast_href
+    def get_roast(self, roast_url):
+        # roast_href = roast_href if roast_href[0] == "/" else "/"+roast_href
+        # roast_url = base_url + roast_href
         logging.info(f"Scraping roast attributes at {roast_url}.")
         response = self.get_url(roast_url, headers=request_header)
         soup = BeautifulSoup(response.text, "html.parser")

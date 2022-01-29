@@ -14,33 +14,35 @@ class TestSlateScraper():
     def test_get_active_roasts(self):
         import pytest; pytest.set_trace()
         assert set(scraper.get_active_roasts()) == set([
-            '/products/southern-weather', '/products/geometry', '/products/monarch', '/products/power-nap',\
-            '/products/tropical-weather', '/products/krampus', '/products/framily', '/products/decaf-colombia-aponte-village',\
-            '/products/mexico-la-ilusion-coe-4', '/products/ethiopia-basha-bekele-zero-o2-natural',\
-            '/products/ethiopia-worka-chelbesa-anaerobic', '/products/colombia-jose-salazar-coe-6',\
-            '/products/animal-collective-collaboration', '/products/panama-carolyn-saraceni-anaerobic',\
-            '/products/costa-rica-las-lajas-yellow-honey','/products/colombia-juan-jimenez',\
-            '/products/ethiopia-negusse-nare-low-o2', '/products/costa-rica-volcan-azul-anaerobic-sl-28',\
-            '/products/el-salvador-santa-rosa', '/products/colombia-aponte-village', '/products/ethiopia-negusse-nare-bombe-natural',\
-            '/products/decaf-colombia-el-vergel', '/products/ethiopia-dumerso-layered', '/products/costa-rica-las-lajas-natural-2',\
-            '/products/costa-rica-cascara', '/products/cold-brew', '/products/eclipse'
+            'https://slatecoffee.com/product/ethiopia-shanta-wene/',
+            'https://slatecoffee.com/product/guatemala-bella-carmona/',
+            'https://slatecoffee.com/product/el_sal_las_ninfas/',
+            'https://slatecoffee.com/product/slate-bells-ringing/',
+            'https://slatecoffee.com/product/kenya-karimikui-aa/',
+            'https://slatecoffee.com/product/nightcap-decaf/',
+            'https://slatecoffee.com/product/unfiltered/',
+            'https://slatecoffee.com/product/crema/',
+            'https://slatecoffee.com/product/cream_sugar/',
+            'https://slatecoffee.com/product/under-pressure/',
         ])
 
     def test_get_roast(self):
-        assert scraper.get_roast("/products/geometry") == {
-            "href": "/products/geometry",
+        assert scraper.get_roast("https://slatecoffee.com/product/ethiopia-shanta-wene/") == {
+            "url": "https://slatecoffee.com/product/ethiopia-shanta-wene/",
+            "name": "GEDEO ZONE, ETHIOPIA",
             "roaster": "Slate",
-            "name": " Geometry",
-            "description": 'Geometry has been defined as "describing spaces that lie beyond the normal range of human experience." Soon it will also be defined as "that coffee from Slate that I am in love with and completely redefined my relationship with coffee."\nIt\'s our answer for everything and has two of our favorite coffees—a washed processed Ethiopian & Colombian. This blend has become one of our favorite coffees. We love it as a filter coffee, and we love it as espresso. And not only does is it taste great as either but it\'s easy to dial in as espresso or filter.',
-            "origin": "Colombia, Ethiopia",
-            "process": "Washed",
-            "elevation": "1950 - 2100 Meters",
-            "tasting_notes": "Berries, Sweet Lemon, Earl Grey, Honey, Silky & Round"
+            "producer": "1000 smallholder farmers",
+            "origin": "Shanta Wene, Bensa Woreda, Sidama, Ethiopia",
+            "cultivar": "Kurume",
+            "process": "Full natural and dried on raised beds",
+            "elevation": "1900 – 2100 masl",
+            "tasing_notes": "Boysenberry Syrup, Licorice, Dark Chocolate",
+            "description": "Shanta Wene is located in the region of Sidama, know for its complex, spicy, and citric coffees. However, the farms around Shanta Wene are located in Bensa Woreda micro-region, which produces very unique profiles from the rest of the coffees in the greater Sidama Zone. Coffees from Bensa are know to be uniquely fruity and very rich with standout berry and tropical notes. Sidama has one of the most robust cooperative unions in Ethiopia with 53 member cooperatives, as well as a thriving industry of independent washing stations. Testi Ayla is one such independent washing station, operated by Faysel Yonis. Located in Shanta Wene, a small community in eastern Sidama, close to the Harenna Forest preserve. Testi Ayla receives coffee cherries from 1000 smallholder farmers with land averaging only two hectares. These farms are located on some of the highest elevations in the whole of Sidama. This grade 1 natural, which is rare for the region, is dried and dehydrated slowly due to the cool nights and hot afternoon hours. The result is a clean, boysenberry-like cup with abundant complexity and a surprisingly creamy mouthfeel. Upon tasting, you will be greeted by a lingering sweet boysenberry syrup, followed by a unique licorice note and finishing with a rich dark chocolate aftertaste."
         }
 
-# class TestSlateJob():
-#     @patch.object(scraper, "get_url", new=lambda x,headers: api_responses[x])
-#     def test_job(self):
-#         result = scrape_slate_test.execute_in_process(partition_key=None)
-#         # import pytest; pytest.set_trace()
-#         assert result.success
+class TestSlateJob():
+    @patch.object(scraper, "get_url", new=lambda x,headers: api_responses[x])
+    def test_job(self):
+        result = scrape_slate_test.execute_in_process(partition_key=None)
+        # import pytest; pytest.set_trace()
+        assert result.success

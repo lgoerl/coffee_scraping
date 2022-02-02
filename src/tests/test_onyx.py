@@ -11,9 +11,7 @@ from dagster.utils import file_relative_path
 scraper = OnyxMockScraper()
 
 class TestOnyxScraper():
-    # @patch.object(scraper, "get_url", new=lambda x,headers: api_responses[x])
     def test_get_active_roasts(self):
-        # import pytest; pytest.set_trace()
         assert set(scraper.get_active_roasts()) == set([
             '/products/southern-weather', '/products/geometry', '/products/monarch', '/products/power-nap',\
             '/products/tropical-weather', '/products/krampus', '/products/framily', '/products/decaf-colombia-aponte-village',\
@@ -27,7 +25,6 @@ class TestOnyxScraper():
             '/products/costa-rica-cascara', '/products/cold-brew', '/products/eclipse'
         ])
 
-    # @patch.object(scraper, "get_url", new=lambda x,headers: api_responses[x])
     def test_get_roast(self):
         assert scraper.get_roast("/products/geometry") == {
             "href": "/products/geometry",
@@ -41,8 +38,6 @@ class TestOnyxScraper():
         }
 
 class TestOnyxJob():
-    @patch.object(scraper, "get_url", new=lambda x,headers: api_responses[x])
     def test_job(self):
         result = scrape_onyx_test.execute_in_process(partition_key=None)
-        # import pytest; pytest.set_trace()
         assert result.success

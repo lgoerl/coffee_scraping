@@ -6,6 +6,7 @@ from dagster_pyspark import pyspark_resource
 
 from .postgres_io_manager import postgres_io_manager
 from .api_clients.onyx_api_scraper import OnyxScraper, OnyxMockScraper, onyx_api_client, onyx_mock_api_client
+from .api_clients.slate_api_scraper import SlateScraper, SlateMockScraper, slate_api_client, slate_mock_api_client
 from .schedules import daily_partitioned_config
 
 

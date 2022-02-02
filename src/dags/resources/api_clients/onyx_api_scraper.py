@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from dagster import resource
 from dagster.utils import file_relative_path
+from mock import patch
 from typing import Any, Dict, Optional
 
 from .base_api_scraper import BaseScraper
@@ -37,7 +38,7 @@ class OnyxScraper(BaseScraper):
     def get_roast(self, roast_href):
         roast_href = roast_href if roast_href[0] == "/" else "/"+roast_href
         roast_url = base_url + roast_href
-        logging.warning(f"Scraping roast attributes at {roast_url}.")
+        logging.info(f"Scraping roast attributes at {roast_url}.")
         response = self.get_url(roast_url, headers=request_header)
         soup = BeautifulSoup(response.text, "html.parser")
         stats = soup.find("div", class_=lambda t: t and "coffee-stats" in t)
@@ -80,7 +81,8 @@ class OnyxMockScraper(OnyxScraper):
         if self.pipeline_test:
             return ["/products/geometry"]
         else:
-            return self.super.get_active_roasts()
+            with patch.object(self.super, "get_url", new=lambda x,headers: api_responses[x]):
+                return self.super.get_active_roasts()
 
 
 @resource(description=f"Fetch current roasts and meta from {base_url}")

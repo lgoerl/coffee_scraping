@@ -13,7 +13,7 @@ from sqlalchemy.engine import URL
 
 
 SHARED_POSTGRES_CONF = {
-    "username": os.getenv("POSTGRES_USER", ""),
+    "username": os.getenv("POSTGRES_USERNAME", ""),
     "password": os.getenv("POSTGRES_PASSWORD", ""),
     "host": os.getenv("POSTGRES_HOST")
 }

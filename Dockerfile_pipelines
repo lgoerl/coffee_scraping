@@ -23,7 +23,7 @@ COPY dagster.yaml $DAGSTER_HOME
 WORKDIR /opt/dagster/app
 
 # Install custom plugins and custom libraries
-COPY src/dags/repo.py src setup.py Pipfile* /opt/dagster/app
+COPY src setup.py Pipfile* /opt/dagster/app
 
 RUN pipenv install --system --keep-outdated
 RUN python setup.py install
@@ -34,4 +34,4 @@ EXPOSE 4000
 
 # Using CMD rather than ENTRYPOINT allows the command to be overridden in
 # run launchers or executors to run other commands using this image
-CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-f", "repo.py"]
+CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-m", "dags.repo"]

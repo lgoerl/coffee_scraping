@@ -8,6 +8,5 @@ setup(
     url="https://github.com/lgoerl/coffee_scraping",
     python_requires=">=3.8",
     author="Lee Goerl",
-    packages=find_packages(where="src", exclude=["docs", "tests", "*.pickle"]),
-    package_dir={"dags": "src/dags"},
+    packages=find_packages(where="src", exclude=["docs", "tests"]),
 )

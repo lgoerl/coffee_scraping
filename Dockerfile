@@ -15,4 +15,6 @@ RUN pip install \
     dagster-postgres \
     dagster-docker
 
-WORKDIR ${DAGSTER_APP}
+COPY dagster.yaml workspace.yaml $DAGSTER_HOME
+
+WORKDIR $DAGSTER_HOME

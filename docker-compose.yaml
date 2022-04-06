@@ -7,9 +7,9 @@ services:
     image: postgres:11
     container_name: docker_postgresql
     environment:
-      POSTGRES_USER: "postgres_user"
-      POSTGRES_PASSWORD: "postgres_password"
-      POSTGRES_DB: "postgres_db"
+      - DAGSTER_POSTGRES_USERNAME
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
     networks:
       - docker_network
 
@@ -26,10 +26,10 @@ services:
     image: docker_pipelines_image
     restart: always
     environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "postgres_db"
-      DAGSTER_CURRENT_IMAGE: "docker_pipelines_image"
+      - DAGSTER_POSTGRES_USERNAME
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
+      - DAGSTER_CURRENT_IMAGE="docker_pipelines_image"
     networks:
       - docker_network
 
@@ -54,9 +54,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "postgres_db"
+      - DAGSTER_POSTGRES_USERNAME
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
     volumes: # Make docker client accessible so we can terminate containers from dagit
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -77,9 +77,9 @@ services:
     container_name: docker_daemon
     restart: on-failure
     environment:
-      DAGSTER_POSTGRES_USER: "postgres_user"
-      DAGSTER_POSTGRES_PASSWORD: "postgres_password"
-      DAGSTER_POSTGRES_DB: "postgres_db"
+      - DAGSTER_POSTGRES_USERNAME
+      - DAGSTER_POSTGRES_PASSWORD
+      - DAGSTER_POSTGRES_DB
     volumes: # Make docker client accessible so we can launch containers using host docker
       - /var/run/docker.sock:/var/run/docker.sock
     networks:

@@ -3,3 +3,5 @@
 build/*
 dist/*
 coffee_scraping.egg-info/*
+notebooks/.ipynb_checkpoints/*
+src/tests/__pycache__/*
